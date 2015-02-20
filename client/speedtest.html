@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network speed tester</title>
+    <style>body {
+        font-family: "Lucida Console";
+        font-size: larger;
+        line-height: 1.5em;
+    }
+
+    #progressBar {
+        border: 2px solid gray;
+    }
+
+    #middle {
+        width: 100%;
+        background-color: blue;
+    }
+
+    #reached {
+        height: 1.4em;
+        background-color: lime;
+        box-sizing: border-box;
+        width: 0%;
+        text-align: right;
+        padding-right: 1em;
+        border: 0px;
+    }
+
+    #footer {
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+
+<div style="line-height: 2.5em;">
+    <br> ** Network Speed Test ** <br>
+</div>
+<form name="f" action=".">
+    <br>
+     data size (Mb) : <input type="text" name="size" value="10"/>
+    <input type="submit" value="Run Test">
+    <button onclick="prepareDataToUpload()">Run upload test</button>
+</form>
+
+
+
+<div id="progressBar" style="width:40%;">
+    <div id="middle">
+        <div id="reached"></div>
+    </div>
+</div>
+
+<div style="display:none;"> (chunk size <span id="sChunkSize"></span> KB)
+    x (<span id="sChunkCount">0</span>)
+    = (total transfer <span id="sTransferred"></span> KB)
+</div>
+<div> current rate <span id="sCurRateSec">.</span> KB/sec
+    , <span id="sCurRateMin">.</span> MB/min
+    , <span id="sCurRateBit">.</span> mb/sec
+</div>
+<div> average rate <span id="sAvgRateSec">.</span> KB/sec
+    , <span id="sAvgRateMin">.</span> MB/min
+    , <span id="sAvgRateBit">.</span> mb/sec
+</div>
+<div> maximum rate <span id="sMaxRateSec">.</span> KB/sec
+    , <span id="sMaxRateMin">.</span> MB/min
+    , <span id="sMaxRateBit">.</span> mb/sec
+</div>
+
+<script>
+var chunkCount = 0
+            , transferred = 0 // unit KB
+            , allStartTime = (new Date()).getTime()
+            , recentTransferred = 0
+            , recentStartTime = Date.now()
+            , recentCurrentCount = 0
+            , recentMaxCount
+            , chunkSize // unit KB
+            , maxSize
+            , maxSpeed = 0
+            ;
+    function setSize(chunkSize, maxSize){
+        window.chunkSize = chunkSize;
+        window.maxSize = maxSize;
+        sChunkSize.innerText = chunkSize;
+        recentMaxCount = 1024 / chunkSize;
+        document.f.size.value = maxSize;
+    }
+    function update(){
+        var now = (new Date()).getTime();
+        var base;
+        sChunkCount.innerText = ( ++chunkCount);
+        sTransferred.innerText = (transferred += chunkSize);
+        base = transferred / (now - allStartTime) * 1000;
+        sAvgRateSec.innerText = Math.round(base);
+        sAvgRateBit.innerText = Math.round(base * 8 / 100) / 10;
+        sAvgRateMin.innerText = Math.round(base * 60 / 1024);
+        var percent = 100 * transferred / (maxSize * 1024);
+        reached.style.width = percent + '%';
+        reached.innerText = Math.round(percent) + '%';
+
+
+        recentTransferred += chunkSize;
+        recentCurrentCount++;
+        if (recentCurrentCount === recentMaxCount) {
+            base = recentTransferred / (now - recentStartTime) * 1000;
+            sCurRateSec.innerText = Math.round(base);
+            sCurRateBit.innerText = Math.round(base * 8 / 100) / 10;
+            sCurRateMin.innerText = Math.round(base * 60 / 1024);
+            recentCurrentCount = 0;
+            recentTransferred = 0;
+            recentStartTime = now;
+            if(base>maxSpeed){
+                sMaxRateSec.innerText = Math.round(base);
+                sMaxRateBit.innerText = Math.round(base * 8 / 100) / 10;
+                sMaxRateMin.innerText = Math.round(base * 60 / 1024);
+                maxSpeed = base;
+            }
+        }
+
+
+        document.getElementById('chunk').outerHTML = '';
+       // console.log('a' + recentCurrentCount);
+    }
+    function onEnd(){
+        sTransferred.innerText = transferred / 1024;
+        sTransferred.nextSibling.nodeValue = ' MB)';
+        // alert('end');
+    }
+
+    
+</script>

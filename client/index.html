@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>** Network Speed Test **</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/speedtest.js"></script>
+    <link href="css/speedtest.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div style="width: 450px">
+    <div class="title" align="center">
+        ** Network Speed Test **
+    </div>
+    <div>
+        <div>
+            data size (Mb) : <input type="text" name="size" value="10" id="uploadSize"/>
+        </div>
+        <div>
+            <button type='button' id='DownloadButton' class='Button'>Run download test</button>
+            <button type='button' id='UploadButton' class='Button'>Run upload test</button>
+        </div>
+    </div>
+
+
+    <div id="progressBar">
+        <div id="middle">
+            <div id="reached"></div>
+        </div>
+    </div>
+
+    <div style="display:none;"> (chunk size <span id="sChunkSize"></span> KB)
+        x (<span id="sChunkCount">0</span>)
+        = (total transfer <span id="sTransferred"></span> KB)
+    </div>
+    <div>
+        total time: <span id="sTotalTime">.</span> sec
+        - <span id="sTransferredData">.</span>
+    </div>
+    <div> current rate <span id="sCurRateSec">.</span> KB/sec
+        - <span id="sCurRateMin">.</span> MB/min
+        - <span id="sCurRateBit">.</span> mbit/sec
+    </div>
+    <div> average rate <span id="sAvgRateSec">.</span> KB/sec
+        - <span id="sAvgRateMin">.</span> MB/min
+        - <span id="sAvgRateBit">.</span> mbit/sec
+    </div>
+    <div> maximum rate <span id="sMaxRateSec">.</span> KB/sec
+        - <span id="sMaxRateMin">.</span> MB/min
+        - <span id="sMaxRateBit">.</span> mbit/sec
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" charset="utf-8">
+
+    window.addEventListener("load", ready);
+
+</script>
+</html>
